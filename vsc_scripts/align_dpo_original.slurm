@@ -15,7 +15,7 @@
 
 # Enable for A100
 export FI_PROVIDER="efa"
-
+export WANDB_EXPERIMENT_NAME=$SLURM_JOB_NAME
 export LOGLEVEL=INFO
 # debugging flags (optional)
 export NCCL_DEBUG=INFO
@@ -30,7 +30,7 @@ eval "$(conda shell.bash hook)"
 conda activate /dodrio/scratch/projects/2023_079/project_data/env/align
 
 ACCELERATE_LOG_LEVEL=info accelerate launch \
-    --config_file recipes/accelerate_configs/multi_gpu.yaml \
+    --config_file recipes/accelerate_configs/fsdp.yaml \
     --num_processes 4 \
     scripts/run_dpo.py recipes/llama-2-7b-nl-original/dpo/config_full.yaml
 
