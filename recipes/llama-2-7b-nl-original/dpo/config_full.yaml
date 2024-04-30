@@ -2,6 +2,7 @@
 model_name_or_path: llama-2-nl/Llama-2-7b-hf-lora-original
 model_revision: main
 torch_dtype: bfloat16
+use_flash_attention_2: true
 
 # Data training arguments
 # For definitions, see: src/h4/training/config.py
