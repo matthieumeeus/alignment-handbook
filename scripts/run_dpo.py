@@ -203,6 +203,29 @@ def main():
         peft_config=get_peft_config(model_args),
         loss_type=training_args.loss_type,
     )
+    
+    prepared_model = trainer._wrap_model(
+        trainer.model, training=True, dataloader=None
+    )
+    if hasattr(trainer.lr_scheduler, "step"):
+        prepared_model, trainer.optimizer = trainer.accelerator.prepare(
+            prepared_model, trainer.optimizer
+        )
+    else:
+        (
+            prepared_model,
+            trainer.optimizer,
+            trainer.lr_scheduler,
+        ) = trainer.accelerator.prepare(
+            prepared_model, trainer.optimizer, trainer.lr_scheduler
+        )
+    trainer.model_wrapped = prepared_model
+    if trainer.is_fsdp_enabled:
+        trainer.model = prepared_model
+    if trainer.ref_model is not None:
+        trainer.ref_model = trainer.accelerator.prepare_model(trainer.ref_model)
+
+    trainer.accelerator.prepare_model = lambda model, *args, **kwargs: model # Monkey-patch prepare_model a no-op , since we have manually prepared the models
 
     ###############
     # Training loop

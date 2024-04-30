@@ -2,9 +2,9 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # This software may be used and distributed according to the terms of the GNU General Public License version 3.
 # module swap cluster/dodrio/gpu_rome_a100_80
-# sbatch vsc_scripts/align_dpo_original.slurm
+# sbatch vsc_scripts/align_sft_original.slurm
 
-#SBATCH --job-name=llama_og_dpo
+#SBATCH --job-name=llama_og_sft
 
 #SBATCH --mem=200G                   # amount of memory requested per node
 #SBATCH --time 72:00:00              # maximum execution time (HH:MM:SS)
@@ -29,8 +29,8 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 eval "$(conda shell.bash hook)"
 conda activate /dodrio/scratch/projects/2023_079/project_data/env/align
 
-ACCELERATE_LOG_LEVEL=info accelerate launch \
+ACCELERATE_LOG_LEVEL=debug accelerate launch \
     --config_file recipes/accelerate_configs/fsdp.yaml \
     --num_processes 4 \
-    scripts/run_dpo.py recipes/llama-2-7b-nl-original/dpo/config_full.yaml
+    scripts/run_sft.py recipes/llama-2-7b-nl-original/sft/config_full.yaml
 
